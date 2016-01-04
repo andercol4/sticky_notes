@@ -1,6 +1,6 @@
 var Note = React.createClass({
 	getInitialState: function(){
-		return { notes: this.props.notes };
+		return { notes: this.props.notes, noteName: null, noteDescription: null, notePriority: null };
 	},
 	getDefaultState: function(){
 		return { notes: []};
@@ -52,15 +52,62 @@ var Note = React.createClass({
 								<button type='submit' className='btn'>stick a sticky</button>
 							</form>
 						 </div>)
-		}
+		  } else if(  this.state.noteName != null || this.state.noteDescription != null || this.state.notePriority != null) {
+			this.setState({ noteName: null, noteDescription: null, notePriority: null})
+    }
 	},
+	deleteNote: function(id){
+		var self = this;
+	  $.ajax({
+	  	url: '/notes/'+ id,
+	  	type: 'DELETE',
+	  	success: function(data){
+	  		self.setState({notes: data})
+
+	  	}
+
+	  })
+
+	},
+
+	drawNotes: function(){
+		var notes =[];
+		var self = this;
+		this.state.notes.forEach(function(note){
+	
+			notes.push( 
+						        <div className="col m3">
+						          <div className="card small yellow lighten-3">
+						            <div className="card-content black-text">
+						              <span className="card-title">{note.name}</span>
+						              <p>{note.description}</p>
+						              <p>{note.priority}</p>
+						              
+						            </div>
+						            <div className="card-action">
+           								<button className='btn' data-id={note.id} onClick={ () => self.deleteNote(note.id)}>Delete</button>
+            					  </div>
+						     
+						          </div>
+						        </div>
+						  
+            
+									)
+		})
+
+		return notes;
+	},
+
 
 
 
 	render: function(){
 		return(<div>
 							<button className='btn' onClick={this.openForm}>New Sticky</button>
-							{this.addNote()}
+								{this.addNote()}
+							<div className="row">
+								{this.drawNotes()}
+							</div>
 					</div>)
 
 	}
