@@ -1,6 +1,6 @@
 class NotesController < ApplicationController
   def index
-  	@notes = Note.all
+  	@notes = Note.priority
   end
 
   def create
@@ -10,7 +10,7 @@ class NotesController < ApplicationController
   def destroy
   		note = Note.find(params[:id])
   		note.destroy
-  		notes = Note.all
+  		notes = Note.priority
   		render json: notes
 
   end

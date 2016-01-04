@@ -18,6 +18,7 @@ var Note = React.createClass({
       success: function(data) {
         var notes = self.state.notes
         notes.push(data)
+        notes = notes.sort(function(a,b){return a.priority - b.priority})
         self.setState({notes: notes, openForm: false, noteName: null, noteDescription: null, notePriority: null})
       }
     });
@@ -74,24 +75,24 @@ var Note = React.createClass({
 		var notes =[];
 		var self = this;
 		this.state.notes.forEach(function(note){
-	
-			notes.push( 
+
+			notes.push(
 						        <div className="col m3">
 						          <div className="card small yellow lighten-3">
 						            <div className="card-content black-text">
 						              <span className="card-title">{note.name}</span>
 						              <p>{note.description}</p>
 						              <p>{note.priority}</p>
-						              
+
 						            </div>
 						            <div className="card-action">
            								<button className='btn' data-id={note.id} onClick={ () => self.deleteNote(note.id)}>Delete</button>
             					  </div>
-						     
+
 						          </div>
 						        </div>
-						  
-            
+
+
 									)
 		})
 
