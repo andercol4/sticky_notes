@@ -46,10 +46,6 @@ var Note = React.createClass({
 									<input  type='text' onChange={this.addNotesDescription}></input>
 									<label>Description</label>
 								</div>
-								<div className='input-field'>
-									<input  type='number' onChange={this.addNotesPriority}></input>
-									<label>Priority</label>
-								</div>
 								<button type='submit' className='btn'>stick a sticky</button>
 							</form>
 						 </div>)
@@ -64,13 +60,39 @@ var Note = React.createClass({
 	  	type: 'DELETE',
 	  	success: function(data){
 	  		self.setState({notes: data})
-
 	  	}
-
 	  })
-
 	},
-
+  upPriority: function(id){
+		var self = this;
+    var note = this.props.notes.find(function(e,i,a){ if(e.id ===id){return e}})
+    var newPriority = note.priority -= 1
+	  $.ajax({
+	  	url: '/notes/'+ id,
+	  	type: 'PUT',
+      data: {note: {priority: newPriority}},
+	  	success: function(data){
+        var notes = self.state.notes
+        notes = notes.sort(function(a,b){return a.priority - b.priority})
+        self.setState({notes: notes})
+	  	}
+	  })
+	},
+  downPriority: function(id){
+		var self = this;
+    var note = this.props.notes.find(function(e,i,a){ if(e.id ===id){return e}})
+    var newPriority = note.priority += 1
+	  $.ajax({
+	  	url: '/notes/'+ id,
+	  	type: 'PUT',
+      data: {note: {priority: newPriority}},
+	  	success: function(data){
+        var notes = self.state.notes
+        notes = notes.sort(function(a,b){return a.priority - b.priority})
+        self.setState({notes: notes})
+	  	}
+	  })
+	},
 	drawNotes: function(){
 		var notes =[];
 		var self = this;
@@ -86,7 +108,9 @@ var Note = React.createClass({
 
 						            </div>
 						            <div className="card-action">
-           								<button className='btn' data-id={note.id} onClick={ () => self.deleteNote(note.id)}>Delete</button>
+           								<button className='btn' onClick={ () => self.deleteNote(note.id)}>Delete</button>
+                          <button className='btn' onClick={ () => self.upPriority(note.id)}>&#9757;</button>
+                          <button className='btn' onClick={ () => self.downPriority(note.id)}>&#9759;</button>
             					  </div>
 
 						          </div>
